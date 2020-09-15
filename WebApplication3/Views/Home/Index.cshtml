@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Home";
+}
+
+
+<table>
+    <tr>
+        <td>
+            <a href="@Url.Action("Index", "Boat", new { val = "Insert" })">Insert Boat Information</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="@Url.Action("Index","Boat", new { val = "Retrieve" })">Retrieve Boat Status</a>
+        </td>
+    </tr>
+</table>

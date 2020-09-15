@@ -1,0 +1,40 @@
+﻿@model WebApplication3.Models.clsLogin
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+@if(Convert.ToString(TempData["CR"]) != "")
+{
+    @TempData["CR"];
+}
+@using (Html.BeginForm("LoginUser", "Login", FormMethod.Post))
+{
+    <table>
+        <tr>
+            <td>
+                UserId
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.UserId, new { @maxlength = "50", @id = "txtUserId" })
+                @Html.ValidationMessageFor(model => model.UserId)
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Password
+            </td>
+            <td>
+                @Html.PasswordFor(model => model.Password, new { @maxlength = "50", @id = "txtPassword" })
+                @Html.ValidationMessageFor(model => model.Password)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" id="btnLogin" value="Login" />
+            </td>
+        </tr>
+    </table>
+}

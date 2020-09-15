@@ -1,0 +1,181 @@
+﻿
+@{
+    ViewBag.Title = "Boat Information";
+}
+<h2>Boat Information</h2>
+<a href="@Url.Action("Index", "Home", new { val = "" })">Back to Home</a>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        getReqId();
+
+        function getReqId() {
+            //alert("in1");
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("getReq","Boat")',
+                success: function (data) {
+                    if (data.Result != "") {
+                        $("#txtReqId").val(data.Result)
+                    }
+                    else if (data.Result == -1) {
+                        alert("There is error while fetching Request Id");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert(error);
+                }
+            })
+        }
+
+        $("#btnSave").click(function () {
+
+            var bInfo = new Object();
+            bInfo.reqId = $("#txtReqId").val();
+            bInfo.hRate = $("#txtHRate").val();
+            bInfo.BName = $("#txtBName").val();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("InsertBoat","Boat")',
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                data: "{objBoat:" + JSON.stringify(bInfo) + "}",
+                success: function (data) {
+                    if (data.Result != "error") {
+                        alert("Boat Record is inserted successfully with Boat Id = " + data.Result);
+                        $("#txtReqId").val("");
+                        $("#txtHRate").val("");
+                        $("#txtBName").val("");
+                        getReqId();
+                    }
+                    else if (data.Result == "error") {
+                        alert("There is error while saving boat information.")
+                        $("#txtReqId").val("");
+                        $("#txtHRate").val("");
+                        $("#txtBName").val("");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert(error);
+                    $("#txtReqId").val("");
+                    $("#txtHRate").val("");
+                    $("#txtBName").val("");
+                }
+            })
+        })
+
+        $("#btnRetrieve").click(function () {
+
+            var bInfoR = new Object();
+            bInfoR.reqId = $("#txtReqIdR").val();
+            //alert("bInfoR.reqId=" + bInfoR.reqId);
+            bInfoR.BNo = $("#txtBNoR").val();
+            //alert("bInfoR.BNo=" + bInfoR.BNo);
+            //bInfoR.CName = $("#txtCNameR").val();
+            //alert("bInfoR.CName=" + bInfoR.CName);
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("getStatusBoat","Boat")',
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                data: "{objBoat:" + JSON.stringify(bInfoR) + "}",
+                success: function (data) {
+                    if (data.Result == "boat is not booked") {
+                        alert("Boat is not registered. You can Book the boat.")
+                        $("#txtReqIdR").val("");
+                        $("#txtBNoR").val("");
+                        //$("#txtCNameR").val("");
+                    }
+                    else if (data.Result == "boat is booked") {
+                        alert("Boat is Booked.")
+                        $("#txtReqIdR").val("");
+                        $("#txtBNoR").val("");
+                        //$("#txtCNameR").val("");
+                    }
+                    else if (data.Result == "no record found") {
+                        alert("No record found against your data. Kindly enter correct data to check status.")
+                        $("#txtReqIdR").val("");
+                        $("#txtBNoR").val("");
+                        //$("#txtCNameR").val("");
+                    }
+                    else if (data.Result == "error") {
+                        alert("There is error while getting boat status.")
+                        $("#txtReqIdR").val("");
+                        $("#txtBNoR").val("");
+                        //$("#txtCNameR").val("");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert(error);
+                    $("#txtReqIdR").val("");
+                    $("#txtBNoR").val("");
+                    //$("#txtCNameR").val("");
+                }
+            })
+        })
+    })
+</script>
+@if (Convert.ToString(TempData["Val"]) == "Insert")
+{
+    <table id="tblBI">
+        <tr>
+            <td>
+                Request Id
+            </td>
+            <td>
+                <input type="text" disabled="disabled" id="txtReqId" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Hourly Rate
+            </td>
+            <td>
+                <input type="text" id="txtHRate" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Boat Name
+            </td>
+            <td>
+                <input type="text" id="txtBName" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align:center;">
+                <input type="button" id="btnSave" value="Save" />
+            </td>
+        </tr>
+    </table>
+}
+else if (Convert.ToString(TempData["Val"]) == "Retrieve")
+{
+    <table id="tblBR">
+        <tr>
+            <td>
+                Request Id
+            </td>
+            <td>
+                <input type="text" id="txtReqIdR" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Boat Number
+            </td>
+            <td>
+                <input type="text" id="txtBNoR" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align:center;">
+                <input type="button" id="btnRetrieve" value="Retrieve" />
+            </td>
+        </tr>
+    </table>
+}
+
